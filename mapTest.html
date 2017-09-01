@@ -1,0 +1,108 @@
+﻿over at top right of the code block to copy the code or open it in JSFiddle.
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Geolocation</title>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+	<meta charset="utf-8">
+	<style>
+		 /* Always set the map height explicitly to define the size of the div
+		* element that contains the map. */
+		 #map {
+			 height: 100%;
+		 }
+		 /* Optional: Makes the sample page fill the window. */
+		 html, body {
+			 height: 100%;
+			 margin: 0;
+			 padding: 0;
+		 }
+	</style>
+</head>
+<body>
+	<div id="map"></div>
+	<script>
+		// Note: This example requires that you consent to location sharing when
+		// prompted by your browser. If you see the error "The Geolocation service
+		// failed.", it means you probably did not give permission for the browser to
+		// locate you.
+		var map, infoWindow;
+		function initMap() {
+			map = new google.maps.Map(document.getElementById('map'), {
+				center: { lat: -34.397, lng: 150.644 },
+				zoom: 12
+			});
+			
+
+			// Try HTML5 geolocation.
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(function (position) {
+					var pos = {
+						lat: position.coords.latitude,
+						lng: position.coords.longitude
+					};
+
+					var request = {
+						location: pos,
+						radius: '50000',
+						types: ['restaurant'],
+						name: 'McDonald'
+					};
+
+					var infoWindow = new google.maps.InfoWindow;
+
+					var service = new google.maps.places.PlacesService(map);
+					service.nearbySearch(request, function (results, status) {
+						if (status == google.maps.places.PlacesServiceStatus.OK) {
+							for (var i = 0; i < results.length; i++) {
+								var place = results[i];
+								// If the request succeeds, draw the place location on
+								// the map as a marker, and register an event to handle a
+								// click on the marker.
+								//var marker = new google.maps.Marker({
+								//	map: map,
+								//	position: place.geometry.location
+								//});
+
+								infoWindow = new google.maps.InfoWindow;
+								infoWindow.setPosition(place.geometry.location);
+								infoWindow.setContent('<p>'+place.name+'</p>'/*Show a small scoller of all available toys*/);
+								infoWindow.open(map);
+							}
+						}
+
+						map.setCenter(pos);
+					});
+
+					var marker = new google.maps.Marker({
+						map: map,
+						position: pos
+					});
+
+					//infoWindow.setPosition(pos);
+					//infoWindow.setContent('<a href="http://www.nzherald.co.nz" target="_blank"><h1>I am here!!</h1></a>');
+					//infoWindow.open(map);
+					
+				}, function () {
+					handleLocationError(true, infoWindow, map.getCenter());
+				});
+			} else {
+				// Browser doesn't support Geolocation
+				handleLocationError(false, infoWindow, map.getCenter());
+			}
+		}
+
+		function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+			infoWindow.setPosition(pos);
+			infoWindow.setContent(browserHasGeolocation ?
+				'Error: The Geolocation service failed.' :
+				'Error: Your browser doesn\'t support geolocation.');
+			infoWindow.open(map);
+		}
+	</script>
+	<script async defer
+			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC73I53JXmKD6NKj-CZKJCGuW4C7uNwfhY&callback=initMap&libraries=places">
+	</script>
+</body>
+</html>

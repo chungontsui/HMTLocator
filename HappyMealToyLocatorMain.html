@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title></title>
+	<style>
+		.flex-container {
+			display: flex;
+			flex-direction: row;
+			width: 400px;
+			height: 400px;
+			background-color: lightgrey;
+		}
+
+		.flex-item {
+			background-color: cornflowerblue;
+			width: 100px;
+			height: 100px;
+			margin: 10px;
+		}
+
+		.container {
+			position: relative;
+			width: 100%;
+			margin-top: 5px;
+		}
+
+		.image {
+			opacity: 1;
+			display: block;
+			width: 100%;
+			height: auto;
+			transition: .5s ease;
+			backface-visibility: hidden;
+		}
+
+		.middle {
+			transition: .5s ease;
+			opacity: 0;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			-ms-transform: translate(-50%, -50%);
+			text-align: center
+		}
+
+		.container:hover .image {
+			opacity: 0.3;
+		}
+
+		.container:hover .middle {
+			opacity: 1;
+		}
+
+		.text {
+			background-color: #4CAF50;
+			color: white;
+			font-size: 16px;
+			padding: 5px 10px;
+		}
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+	<script>
+		var app = angular.module('myApp', []);
+		app.controller('myCtrl', function ($scope) {
+			$scope.imgSRC = [{ id: "1", src: "toy1.jpg" }, { id: "2", src: "toy2.jpg" }];
+			$scope.removeImg = function (id) {
+				var _id = id;
+				/*send REST call to background*/
+			}
+		});
+
+	</script>
+</head>
+<body ng-app="myApp">
+	<div class="flex-container" ng-controller="myCtrl" style="width: 800px;">
+		<div class="flex-item" style="width: 65%;">This little piggy stayed home.</div>
+		<div class="flex-item" style="width: 30%;">
+			<div class="flex-container" style="width: 100%;flex-direction: row;">
+				<div style="width: 50%">
+					<!--<img src="toy1.jpg" style="width: 120px;">
+					<img src="toy2.jpg" style="width: 120px;">-->
+
+					<div class="container" ng-repeat="isrc in imgSRC">
+						<img ng-src="{{isrc.src}}" alt="Avatar" class="image" style="width:120px">
+						<div class="middle">
+							<div>
+								<img src="Like.png" ng-click="removeImg(isrc.id)" style="display:inline-block;width:30px; height:30px" />
+								<img src="NotLike.png" ng-click="removeImg(isrc.id)" style="display:inline-block;width:30px; height:30px" />
+							</div>
+							<img src="delete1Btn.png" ng-click="removeImg(isrc.id)" style="width:40px; height:40px" />
+						</div>
+					</div>
+
+				</div>
+				<div style="width: 50%;margin-left: 10px;">
+					<img src="toy1.jpg" style="width: 120px;">
+					<img src="toy2.jpg" style="width: 120px;">
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
