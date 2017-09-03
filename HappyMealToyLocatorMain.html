@@ -45,11 +45,12 @@
 			transform: translate(-50%, -50%);
 			-ms-transform: translate(-50%, -50%);
 			text-align: center;
-			width:100%
+			width: 100%;
 		}
 
 		.container:hover .image {
 			opacity: 0.3;
+			filter: brightness(50%);
 		}
 
 		.container:hover .middle {
@@ -62,11 +63,98 @@
 			font-size: 16px;
 			padding: 5px 10px;
 		}
+
+		/* The Modal (background) */
+		.modal {
+			display: none; /* Hidden by default */
+			position: fixed; /* Stay in place */
+			z-index: 1; /* Sit on top */
+			padding-top: 100px; /* Location of the box */
+			left: 0;
+			top: 0;
+			width: 100%; /* Full width */
+			height: 100%; /* Full height */
+			overflow: auto; /* Enable scroll if needed */
+			background-color: rgb(0,0,0); /* Fallback color */
+			background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+		}
+
+		/* Modal Content */
+		.modal-content {
+			background-color: #fefefe;
+			margin: auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 80%;
+		}
+
+		/* The Close Button */
+		.close {
+			color: #aaaaaa;
+			float: right;
+			font-size: 28px;
+			font-weight: bold;
+		}
+
+			.close:hover,
+			.close:focus {
+				color: #000;
+				text-decoration: none;
+				cursor: pointer;
+			}
 	</style>
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 	<script>
+
 		var app = angular.module('myApp', []);
 		app.controller('myCtrl', function ($scope) {
+
+			//var dialog;
+
+			//dialog = $("#dialog-form").dialog({
+			//	autoOpen: false,
+			//	width: 350,
+			//	modal: true,
+			//	buttons: {
+			//		"Add Toy": function () {
+			//			//dialog.dialog("close");
+			//			$scope.uploadNewToy();
+			//		},
+			//		Cancel: function () {
+			//			dialog.dialog("close");
+			//		}
+			//	},
+			//	//close: function () {
+			//	//	form[0].reset();
+			//	//	allFields.removeClass("ui-state-error");
+			//	//}
+			//});
+
+			//$scope.modalForm = angular.element(document.querySelector('#dialog-form'));
+
+			var addToyModal = document.getElementById('dialog-form');
+
+			$scope.uploadNewToy = function () {
+				var data = "data";
+			}
+
+			$scope.openAddToyDialog = function () {
+				//dialog.dialog("open");
+				addToyModal.style.display = "block";
+			};
+
+			$scope.closeAddToyDialog = function () {
+				addToyModal.style.display = "none";
+			}
+
+			$scope.addToyForm = {
+				toyName: "",
+				fileData: ""
+			}
+
 			$scope.imgSRC = [{ id: "1", src: "toy1.jpg" }, { id: "2", src: "toy2.jpg" }];
 			$scope.removeImg = function (id) {
 				var _id = id;
@@ -80,29 +168,53 @@
 	<div class="flex-container" ng-controller="myCtrl" style="width: 800px;">
 		<div class="flex-item" style="width: 65%;">This little piggy stayed home.</div>
 		<div class="flex-item" style="width: 30%;">
-			<div class="flex-container" style="width: 100%;flex-direction: row;">
-				<div style="width: 50%">
-					<!--<img src="toy1.jpg" style="width: 120px;">
-					<img src="toy2.jpg" style="width: 120px;">-->
-
+			<div class="flex-container" style="width: 100%;flex-direction: row; height: auto;">
+				<div style="width: 50%; margin-right: 5px;">
 					<div class="container" ng-repeat="isrc in imgSRC">
 						<img ng-src="{{isrc.src}}" alt="Avatar" class="image" style="width:120px">
 						<div class="middle">
 							<div>
-								<img src="Like.png" ng-click="removeImg(isrc.id)" style="display:inline-block;width:30px; height:30px" />
-								<img src="NotLike.png" ng-click="removeImg(isrc.id)" style="display:inline-block;width:30px; height:30px" />
+								<img src="Like.png" ng-click="like(isrc.id)" style="display:inline-block;width:30px; height:30px" />
+								<img src="NotLike.png" ng-click="notLike(isrc.id)" style="display:inline-block;width:30px; height:30px" />
 							</div>
 							<img src="delete1Btn.png" ng-click="removeImg(isrc.id)" style="width:40px; height:40px" />
 						</div>
 					</div>
-
 				</div>
-				<div style="width: 50%;margin-left: 10px;">
-					<img src="toy1.jpg" style="width: 120px;">
-					<img src="toy2.jpg" style="width: 120px;">
+				<div style="width: 50%; margin-right: 5px;">
+					<div class="container" ng-repeat="isrc in imgSRC">
+						<img ng-src="{{isrc.src}}" alt="Avatar" class="image" style="width:120px">
+						<div class="middle">
+							<div>
+								<img src="Like.png" ng-click="like(isrc.id)" style="display:inline-block;width:30px; height:30px" />
+								<img src="NotLike.png" ng-click="notLike(isrc.id)" style="display:inline-block;width:30px; height:30px" />
+							</div>
+							<img src="delete1Btn.png" ng-click="removeImg(isrc.id)" style="width:40px; height:40px" />
+						</div>
+					</div>
 				</div>
+			</div>
+			<div class="flex-container" style="margin-top: 10px; width: auto; height:auto">
+				<button id="add-toy" ng-click="openAddToyDialog()" class="ui-button ui-widget ui-corner-all" style="width: 100%;">Add Toy</button>
+			</div>
+		</div>
+		<div id="dialog-form" class="modal" title="Create new user" style="height:auto">
+			<div class="modal-content">
+				<span class="close" ng-click="closeAddToyDialog()">&times;</span>
+				<form>
+					<fieldset style="border:none">
+						<label for="name">Description</label>
+						<input type="text" name="name" id="name" ng-model="addToyForm.toyName" placeholder="Name of the toy..." value="Jane Smith" class="text ui-widget-content ui-corner-all">
+						<label for="pict">Upload Picture</label>
+						<input name="pict" id="pict" ng-model="addToyForm.fileData" type="file" value="Add Picture..." />
+						<!-- Allow form submission with keyboard without duplicating the dialog button -->
+						<input type="submit" tabindex="-1" value="Add Toy">
+					</fieldset>
+				</form>
 			</div>
 		</div>
 	</div>
+
 </body>
+
 </html>
