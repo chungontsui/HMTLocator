@@ -110,30 +110,49 @@
 	<script>
 
 		var app = angular.module('myApp', []);
-		app.controller('myCtrl', function ($scope) {
 
-			//var dialog;
+		app.directive('fileModel', ['$parse', function ($parse) {
+			return {
+				restrict: 'A',
+				link: function (scope, element, attrs) {
+					var model = $parse(attrs.fileModel);
+					var modelSetter = model.assign;
 
-			//dialog = $("#dialog-form").dialog({
-			//	autoOpen: false,
-			//	width: 350,
-			//	modal: true,
-			//	buttons: {
-			//		"Add Toy": function () {
-			//			//dialog.dialog("close");
-			//			$scope.uploadNewToy();
-			//		},
-			//		Cancel: function () {
-			//			dialog.dialog("close");
-			//		}
-			//	},
-			//	//close: function () {
-			//	//	form[0].reset();
-			//	//	allFields.removeClass("ui-state-error");
-			//	//}
-			//});
+					element.bind('change', function () {
+						scope.$apply(function () {
+							modelSetter(scope, element[0].files[0]);
+						});
+					});
+				}
+			};
+		}]);
 
-			//$scope.modalForm = angular.element(document.querySelector('#dialog-form'));
+		app.service('fileUpload', ['$http', function ($http) {
+			this.uploadFileToUrl = function (file, uploadUrl) {
+				var fd = new FormData();
+				fd.append('file', file);
+
+				$http.post(uploadUrl, fd, {
+					transformRequest: angular.identity,
+					headers: { 'Content-Type': undefined }
+				}).success(function () {
+
+					}).error(function () {
+					});
+			}
+		}]);
+
+		app.controller('myCtrl', function ($scope, fileUpload) {
+
+			$scope.uploadFile = function () {
+				var file = $scope.myFile;
+
+				console.log('file is ');
+				console.dir(file);
+
+				var uploadUrl = "/fileUpload";
+				fileUpload.uploadFileToUrl(file, uploadUrl);
+			};
 
 			var addToyModal = document.getElementById('dialog-form');
 
@@ -206,8 +225,12 @@
 						<label for="name">Description</label>
 						<input type="text" name="name" id="name" ng-model="addToyForm.toyName" placeholder="Name of the toy..." value="Jane Smith" class="text ui-widget-content ui-corner-all">
 						<label for="pict">Upload Picture</label>
-						<input name="pict" id="pict" ng-model="addToyForm.fileData" type="file" value="Add Picture..." />
+						<!--<input name="pict" id="pict" ng-model="addToyForm.fileData" type="file" value="Add Picture..." />-->
 						<!-- Allow form submission with keyboard without duplicating the dialog button -->
+
+						<input type="file" file-model="myFile" />
+						<button ng-click="uploadFile()">upload me</button>
+
 						<input type="submit" tabindex="-1" value="Add Toy">
 					</fieldset>
 				</form>
