@@ -229,11 +229,12 @@
 					infoWindow.open(map);
 				},
 
-				this.getMcDList = function () {
-
+				this.getMcDList = function (map) {
 					// Try HTML5 geolocation.
 					if (navigator.geolocation) {
 						navigator.geolocation.getCurrentPosition(function (position) {
+							//var map = $("#mapContainer");
+
 							var pos = {
 								lat: position.coords.latitude,
 								lng: position.coords.longitude
@@ -261,13 +262,17 @@
 
 										mapIdList.push(
 											{
-												id: place.id,
-
+												pos: place.geometry.location,
+												name: place.name
 											}
 										);
 									}
+
+									return mapIdList;
 								}
 							});
+
+							
 						});
 					}
 				}
@@ -278,18 +283,16 @@
 
 		app.controller('myCtrl', function ($scope, fileUpload, NgMap, mapService) {
 
-			mapService.getMcDList();
+			//mapService.initMap();
 
 			var vm = this;
 			NgMap.getMap().then(function (map) {
 				console.log('map', map);
 				vm.map = map;
+				vm.shops = mapService.getMcDList(map);
 			});
 
-			vm.shops = [
-				{ id: 'foo', name: 'FOO SHOP', position: [41, -87] },
-				{ id: 'bar', name: 'BAR SHOP', position: [42, -86] }
-			];
+			vm.shops = [];
 			vm.shop = vm.shops[0];
 
 			$scope.uploadFile = function () {
@@ -343,7 +346,7 @@
 			Map
 			<div class="flex-container" id="map" style="width: auto;"></div>
 
-			<ng-map default-style="true" center="current-location" zoom="8">
+			<ng-map default-style="true" center="current-location" zoom="8" id="mapContainer">
 				<marker id='currLocation' position="current-location"></marker>
 				<info-window id="foo-iw" visible="true" ng-repeat="shop in vm.shops">
 					<div ng-non-bindable="">
