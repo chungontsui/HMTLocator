@@ -115,7 +115,7 @@
 
 	<script>
 
-		var app = angular.module('myApp', []);
+		var app;
 
 		app.directive('fileModel', ['$parse', function ($parse) {
 			return {
@@ -256,7 +256,7 @@
 
 		app.service('mapService', mapService);
 
-		app.controller('myCtrl', function ($scope, fileUpload, NgMap, mapService) {
+		 angular.module('myApp').app.controller('myCtrl', function ($scope, fileUpload, NgMap, mapService) {
 
 			var vm = this;
 			NgMap.getMap().then(function (map) {
