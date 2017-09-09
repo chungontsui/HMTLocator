@@ -151,21 +151,97 @@
 
 		var mapService = function () {
 
-			var map;
+			//var map;
 
-			this.initMap = function () {
-				map = new google.maps.Map(document.getElementById('map'), {
-					center: { lat: -34.397, lng: 150.644 },
-					zoom: 12
-				});
+			//this.initMap = function () {
+			//	map = new google.maps.Map(document.getElementById('map'), {
+			//		center: { lat: -34.397, lng: 150.644 },
+			//		zoom: 12
+			//	});
 
 
-				// Try HTML5 geolocation.
-				if (navigator.geolocation) {
-					navigator.geolocation.getCurrentPosition(function (position) {
+			//	// Try HTML5 geolocation.
+			//	if (navigator.geolocation) {
+			//		navigator.geolocation.getCurrentPosition(function (position) {
+			//			var pos = {
+			//				lat: position.coords.latitude,
+			//				lng: position.coords.longitude
+			//			};
+
+			//			var request = {
+			//				location: pos,
+			//				radius: '50000',
+			//				types: ['restaurant'],
+			//				name: 'McDonald'
+			//			};
+
+			//			var infoWindow = new google.maps.InfoWindow;
+
+			//			var service = new google.maps.places.PlacesService(map);
+			//			var mapIdList = [];
+			//			service.nearbySearch(request, function (results, status) {
+			//				if (status == google.maps.places.PlacesServiceStatus.OK) {
+			//					for (var i = 0; i < results.length; i++) {
+			//						var place = results[i];
+			//						// If the request succeeds, draw the place location on
+			//						// the map as a marker, and register an event to handle a
+			//						// click on the marker.
+			//						//var marker = new google.maps.Marker({
+			//						//	map: map,
+			//						//	position: place.geometry.location
+			//						//});
+
+			//						mapIdList.push(place.id);
+
+			//						infoWindow = new google.maps.InfoWindow;
+			//						infoWindow.setPosition(place.geometry.location);
+			//						infoWindow.setContent('<p id="' + place.id + '">' + place.name + '</p>'/*Show a small scoller of all available toys*/);
+			//						infoWindow.open(map);
+			//					}
+			//				}
+			//				mapIdList.forEach(function (m) {
+			//					var infoWId = "#" + m;
+			//					$(infoWId).click(function () {
+			//						//use original 'this'
+			//						this.testfunc();
+			//					});
+			//				});
+			//				map.setCenter(pos);
+			//			});
+			//		}, function () {
+			//			this.handleLocationError(true, infoWindow, map.getCenter());
+			//		});
+			//	} else {
+			//		// Browser doesn't support Geolocation
+			//		this.handleLocationError(false, infoWindow, map.getCenter());
+			//	}
+			//},
+
+			//	this.testfunc = function () {
+			//		alert("cool here");
+			//	},
+
+			//	this.handleLocationError = function (browserHasGeolocation, infoWindow, pos) {
+			//		infoWindow.setPosition(pos);
+			//		infoWindow.setContent(browserHasGeolocation ?
+			//			'Error: The Geolocation service failed.' :
+			//			'Error: Your browser doesn\'t support geolocation.');
+			//		infoWindow.open(map);
+			//	},
+
+				this.getMcDList = function (map, shops) {
+					// Try HTML5 geolocation.
+					//var vm = this;
+					var vm = this;
+
+					//vm.nav = navigator.geolocation;
+
+					//vm.getCurrentPositionCallback = function (position) {
+						//var map = $("#mapContainer");
+
 						var pos = {
-							lat: position.coords.latitude,
-							lng: position.coords.longitude
+							lat: map.center.lat(),
+							lng: map.center.lng()
 						};
 
 						var request = {
@@ -174,106 +250,40 @@
 							types: ['restaurant'],
 							name: 'McDonald'
 						};
-
-						var infoWindow = new google.maps.InfoWindow;
-
-						var service = new google.maps.places.PlacesService(map);
 						var mapIdList = [];
-						service.nearbySearch(request, function (results, status) {
+
+						vm.service = new google.maps.places.PlacesService(map);
+
+						vm.nearbySearchCallback = function (results, status, vm1, vm2 = vm) {
+							//var vm = this;
 							if (status == google.maps.places.PlacesServiceStatus.OK) {
 								for (var i = 0; i < results.length; i++) {
 									var place = results[i];
-									// If the request succeeds, draw the place location on
-									// the map as a marker, and register an event to handle a
-									// click on the marker.
-									//var marker = new google.maps.Marker({
-									//	map: map,
-									//	position: place.geometry.location
-									//});
 
-									mapIdList.push(place.id);
+									//vm.positions1 = [
+									//	{ pos: [40.11, -75.21], name: 1 }, { pos: [40.22, -75.10], name: 2 },
+									//	{ pos: [40.33, -74.99], name: 3 }, { pos: [40.44, -74.88], name: 4 },
+									//	{ pos: [40.55, -74.77], name: 5 }, { pos: [40.66, -74.66], name: 6 }];
 
-									infoWindow = new google.maps.InfoWindow;
-									infoWindow.setPosition(place.geometry.location);
-									infoWindow.setContent('<p id="' + place.id + '">' + place.name + '</p>'/*Show a small scoller of all available toys*/);
-									infoWindow.open(map);
+									vm2.shops.push(
+										{
+											pos: place.vicinity,
+											name: place.name
+										}
+									);
 								}
+
+								//return mapIdList;
 							}
-							mapIdList.forEach(function (m) {
-								var infoWId = "#" + m;
-								$(infoWId).click(function () {
-									//use original 'this'
-									this.testfunc();
-								});
-							});
-							map.setCenter(pos);
-						});
-					}, function () {
-						this.handleLocationError(true, infoWindow, map.getCenter());
-					});
-				} else {
-					// Browser doesn't support Geolocation
-					this.handleLocationError(false, infoWindow, map.getCenter());
-				}
-			},
+						};
 
-				this.testfunc = function () {
-					alert("cool here");
-				},
+						vm.service.nearbySearch(request, vm.nearbySearchCallback);
 
-				this.handleLocationError = function (browserHasGeolocation, infoWindow, pos) {
-					infoWindow.setPosition(pos);
-					infoWindow.setContent(browserHasGeolocation ?
-						'Error: The Geolocation service failed.' :
-						'Error: Your browser doesn\'t support geolocation.');
-					infoWindow.open(map);
-				},
 
-				this.getMcDList = function (map) {
-					// Try HTML5 geolocation.
-					if (navigator.geolocation) {
-						navigator.geolocation.getCurrentPosition(function (position) {
-							//var map = $("#mapContainer");
+					//}
 
-							var pos = {
-								lat: position.coords.latitude,
-								lng: position.coords.longitude
-							};
-
-							var request = {
-								location: pos,
-								radius: '50000',
-								types: ['restaurant'],
-								name: 'McDonald'
-							};
-							var mapIdList = [];
-
-							var service = new google.maps.places.PlacesService(map);
-
-							service.nearbySearch(request, function (results, status) {
-								if (status == google.maps.places.PlacesServiceStatus.OK) {
-									for (var i = 0; i < results.length; i++) {
-										var place = results[i];
-
-										//vm.positions1 = [
-										//	{ pos: [40.11, -75.21], name: 1 }, { pos: [40.22, -75.10], name: 2 },
-										//	{ pos: [40.33, -74.99], name: 3 }, { pos: [40.44, -74.88], name: 4 },
-										//	{ pos: [40.55, -74.77], name: 5 }, { pos: [40.66, -74.66], name: 6 }];
-
-										mapIdList.push(
-											{
-												pos: place.geometry.location,
-												name: place.name
-											}
-										);
-									}
-
-									return mapIdList;
-								}
-							});
-
-							
-						});
+					if (vm.nav) {
+						vm.nav.getCurrentPosition(vm.getCurrentPositionCallback);
 					}
 				}
 
@@ -286,14 +296,31 @@
 			//mapService.initMap();
 
 			var vm = this;
-			NgMap.getMap().then(function (map) {
+			NgMap.getMap("map").then(function (map) {
 				console.log('map', map);
 				vm.map = map;
-				vm.shops = mapService.getMcDList(map);
+				//vm.shops = mapService.getMcDList(map);
 			});
 
+			//vm.shops = [
+			//	{ pos: "358 Church Street, Penrose, Auckland, New Zealand", name: "McDonald's Penrose" },
+			//	{ pos: "102/112 Great North Road, Grey Lynn, Auckland, New Zealand",name:"McDonald's Otara 99/70 3 Booth Dthru"}
+			//];
+			//vm.shop = vm.shops[0];
 			vm.shops = [];
-			vm.shop = vm.shops[0];
+			vm.getMcDList = mapService.getMcDList;
+
+			vm.drawMarker = function () {
+				if (vm.map)
+				{
+					vm.getMcDList(vm.map, vm.shops);
+					//vm.shops = [
+					//	{ pos: "358 Church Street, Penrose, Auckland, New Zealand", name: "McDonald's Penrose" },
+					//	{ pos: "102/112 Great North Road, Grey Lynn, Auckland, New Zealand", name: "McDonald's Otara 99/70 3 Booth Dthru" }
+					//];
+				}
+			}
+
 
 			$scope.uploadFile = function () {
 				var file = $scope.myFile;
@@ -341,25 +368,20 @@
 	</script>
 </head>
 <body ng-app="myApp">
-	<div class="flex-container" ng-controller="myCtrl" style="width: 1200px;">
+	<div class="flex-container" ng-controller="myCtrl as vm" style="width: 1200px;">
 		<div class="flex-item" style="width: 65%;">
 			Map
 			<div class="flex-container" id="map" style="width: auto;"></div>
 
-			<ng-map default-style="true" center="current-location" zoom="8" id="mapContainer">
-				<marker id='currLocation' position="current-location"></marker>
-				<info-window id="foo-iw" visible="true" ng-repeat="shop in vm.shops">
-					<div ng-non-bindable="">
-						id: {{vm.shop.id}}<br />
-						name: {{vm.shop.name}}<br />
-						Position 1: {{vm.shop.position}}<br />
-						Position 2: {{anchor.getPosition()}}<br />
-						Position 3: {{vm.map.markers[vm.shop.id].getPosition()}}<br />
-						<a href="#" ng-click="vm.clicked()">Click Here</a>
-					</div>
-				</info-window>
+			<ng-map default-style="true" center="current-position" zoom="8" id="map" geo-callback="vm.drawMarker()">
+				<custom-marker ng-repeat="shop in vm.shops" position="{{shop.pos}}">
+						<div style="background-color:white">{{shop.name}}</div>
+					</custom-marker>
 			</ng-map>
-
+			<!--<ng-map id="map" center='current-position'
+					geo-fallback-center="[40.74, -74.18]"
+					geo-callback="vm.drawMarker()">
+			</ng-map>-->
 		</div>
 		<div class="flex-item" style="width: 30%;">
 			<div class="flex-container" style="width: 100%;flex-direction: row; height: auto;">
