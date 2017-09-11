@@ -15,7 +15,7 @@
 		}
 
 		.flex-item {
-			background-color: cornflowerblue;
+			/*background-color: cornflowerblue;*/
 			width: 100px;
 			height: 100px;
 			margin: 10px;
@@ -206,18 +206,39 @@
 								$scope.infoWindow.setContent(result.name);
 								$scope.infoWindow.open($scope.map, marker);
 
-								/*replace the following with a function to get actual images from backend*/
-								$scope.$apply(function () {
-									$scope.imgSRC.length = 0;
-									$scope.imgSRC.push({ id: "1", src: "toy3.jpg" });
-									$scope.imgSRC.push({ id: "2", src: "toy4.jpg" });
-								});
+								/*replace the following block with a function to get actual images from backend*/
 
+								$scope.toyLists.length = 0;
+
+								var toyLists = [
+									{ id: "1", src: "toy1.jpg" },
+									{ id: "2", src: "toy2.jpg" },
+									{ id: "3", src: "toy3.jpg" },
+									{ id: "4", src: "toy4.jpg" },
+									{ id: "5", src: "toy5.jpg" }
+								];
+
+								toyLists.push({ id: "6", src: "Like.png" });
+
+								$scope.$apply(function () {
+									$scope.imgSRC1.length = 0;
+									$scope.imgSRC2.length = 0;
+
+									angular.forEach(toyLists, function (t) {
+										if (t.id % 2 == 1) {
+											$scope.imgSRC1.push(t);
+										}
+										else
+										{
+											$scope.imgSRC2.push(t);
+										}
+									});
+
+								});
+								/**/
 							});
 						});
 					};
-
-
 				});
 			}
 
@@ -252,16 +273,14 @@
 			}
 
 			//$scope.imgSRC = [{ id: "1", src: "toy1.jpg" }, { id: "2", src: "toy2.jpg" }];
-			$scope.imgSRC = [];
-			$scope.testImgSrc = "toy1.jpg";
+			$scope.imgSRC1 = [];
+			$scope.imgSRC2 = [];
 
 			$scope.removeImg = function (id) {
 				var _id = id;
 				/*send REST call to background*/
 			}
-			$scope.testfunc = function () {
-				alert("here");
-			}
+
 			$scope.initMap = function () {
 				mapService.initMap();
 			}
@@ -272,40 +291,34 @@
 <body ng-app="myApp">
 	<div class="flex-container" ng-controller="myCtrl" style="width: 1200px;">
 		<div class="flex-item" style="width: 65%;">
-			Map
 			<div class="flex-container" id="map" style="width: auto;"></div>
 		</div>
 		<div class="flex-item" style="width: 30%;">
 			<div class="flex-container" style="width: 100%;flex-direction: row; height: auto;">
 				<div style="width: 50%; margin-right: 5px;">
-					<div class="container" ng-repeat="isrc in imgSRC">
-						<img ng-src="{{isrc.src}}" alt="Avatar" class="image" style="width:120px">
+					<div class="container" ng-repeat="isrc in imgSRC1">
+						<img ng-src="{{isrc.src}}" alt="Avatar" class="image" style="/*width:120px*/">
 						<div class="middle">
-							<div>
+							<!--<div>
 								<img src="Like.png" ng-click="like(isrc.id)" style="display:inline-block;width:30px; height:30px" />
 								<img src="NotLike.png" ng-click="notLike(isrc.id)" style="display:inline-block;width:30px; height:30px" />
-							</div>
+							</div>-->
 							<img src="delete1Btn.png" ng-click="removeImg(isrc.id)" style="width:40px; height:40px" />
 						</div>
 					</div>
 				</div>
 				<div style="width: 50%; margin-right: 5px;">
-					<img ng-src="{{testImgSrc}}" alt="Avatar" class="image" style="width:120px">
-					<div class="container" ng-repeat="isrc in imgSRC">
-						<img ng-src="{{isrc.src}}" alt="Avatar" class="image" style="width:120px">
+					<div class="container" ng-repeat="isrc in imgSRC2">
+						<img ng-src="{{isrc.src}}" alt="Avatar" class="image" style="/*width:120px*/">
 						<div class="middle">
-							<div>
-								<img src="Like.png" ng-click="like(isrc.id)" style="display:inline-block;width:30px; height:30px" />
-								<img src="NotLike.png" ng-click="notLike(isrc.id)" style="display:inline-block;width:30px; height:30px" />
-							</div>
 							<img src="delete1Btn.png" ng-click="removeImg(isrc.id)" style="width:40px; height:40px" />
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="flex-container" style="margin-top: 10px; width: auto; height:auto">
+			<!--<div class="flex-container" style="margin-top: 10px; width: auto; height:auto">
 				<button id="add-toy" ng-click="openAddToyDialog()" class="ui-button ui-widget ui-corner-all" style="width: 100%;">Add Toy</button>
-			</div>
+			</div>-->
 		</div>
 		<div id="dialog-form" class="modal" title="Create new user" style="height:auto">
 			<div class="modal-content">
